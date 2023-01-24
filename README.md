@@ -4,17 +4,17 @@ Setup instructions and exercises for the Modern Data Stack training session.
 
 > NOTE: Cloud SQL will be powered down after each training session to prevent excessive/unnecessary cost accumulation.
 
-> NOTE #2: 🚨 For several parts of this training it necessary to prefix certain
-> application services/instances with a unique string to prevent conflicts or 
-> accidental overwrites.
->
-> Because of cost and technical limitations certain services need to be shared
-> among all participants, e.g. database instances.
->
-> So in the remainder of this training where ever `<YOUR_UNIQUE_PREFIX>` is
-> mentioned you should replace that with your actual unique prefix string, e.g.
-> using your name (i.e. `<YOUR_UNIQUE_PREFIX>_database` becomes 
-> `john_database`)
+## 🚨 Why `<YOUR_UNIQUE_PREFIX>`?
+
+Unfortunately because of cost and technical limitations certain services need to be shared
+among all participants, e.g. database instances.
+Therefore it is necessary to prefix these with a unique string to prevent conflicts
+or accidental overwrites of other people's work.
+
+So in the remainder of this training wherever `<YOUR_UNIQUE_PREFIX>` is
+mentioned you should replace that with your actual unique prefix string, e.g.
+using your name (i.e. `<YOUR_UNIQUE_PREFIX>_database` becomes 
+`john_database`)
 
 ## Getting Started
 
@@ -56,7 +56,10 @@ We are going to use pgAdmin to connect to the CloudSQL instance on GCP, create a
     * Username: `postgres`
     * Password: `<see slack for password>`
 
+<details>
+<summary>Toggle to show image</summary>
 <img src="./assets/server_conn.png" width="350" />
+</details>
 
 6. Click `Save`
 7. We should now be connected to the CloudSQL postgres instance on GCP
@@ -64,7 +67,10 @@ We are going to use pgAdmin to connect to the CloudSQL instance on GCP, create a
     * Expand this see its databases
 8. Right click on the `postgres` database and click `Query Tool`
 
+<details>
+<summary>Toggle to show image</summary>
 <img src="./assets/pg_qt.png" width="350" />
+</details>
 
 9. Now let's create our source database:
     > 🚨 Because we are working with only a single postgres instance every one should prefix a unique string, e.g. your name, to make the database name unique
