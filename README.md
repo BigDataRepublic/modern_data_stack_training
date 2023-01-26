@@ -331,6 +331,7 @@ Supplementary exercises:
     * Look at the dbt documentation to learn about the different materializations strategies for dbt models. What is the difference between a table and a view?
 * Run only a single model at a time ([docs](https://docs.getdbt.com/reference/node-selection/syntax))
 * Write some bad SQL to cause an error — can you debug this error?
+    * Note that if an error persists even after it should have been fixed, removing the `target/` directory might help. 
 
 
 ### Exercise: Add tests
@@ -394,7 +395,7 @@ Here we will combine and/or aggregate staging models to create new models which 
 A solution is provided for each exercise for if you get stuck.
 
 1. Create a model `marts/order_details.sql`.
-    * Calculate sales price for each order after discount is applied, `discounted_price`.
+    * Calculate sales price for each order after discount is applied, i.e. create a column like `discounted_total_price`.
 
 <details>
 <summary>Solution</summary>
@@ -408,7 +409,7 @@ with
     order_details_extended as (
 
         select
-            order_details.order_id
+            order_details.order_id,
             order_details.product_id,
             order_details.unit_price,
             order_details.quantity,
@@ -418,14 +419,14 @@ with
                 order_details.unit_price
                 * order_details.quantity
                 * (1 - order_details.discount)
-            ) as discounted_price
+            ) as discounted_total_price
         from products
         inner join order_details using (product_id)
 
     )
 
 select *
-from final
+from order_details_extended
 ```
 </details>
 
@@ -433,7 +434,7 @@ from final
 2. Create a model `marts/category_sales.sql`
     * This model should calculate the total sales for each product category
     * Group orders by category and sum the total sales for each group.
-    * The sales amount calculation for each product sale should use the `discounted_price` created in the previous model.
+    * The sales amount calculation for each product sale should use the `discounted_total_price` created in the previous model.
 
 <details>
 <summary>Solution</summary>
@@ -442,20 +443,20 @@ from final
 with
     products as (select * from {{ ref("stg_products") }}),
 
-    order_details as (select * from {{ ref("stg_order_details") }}),
-
     categories as (select * from {{ ref("stg_categories") }}),
+
+    order_details as (select * from {{ ref("order_details") }}),
 
     category_sales as (
 
         select
             products.category_id,
             categories.category_name,
-            sum(order_details.unit_price * order_details.quantity) as total_sales
+            sum(order_details.discounted_total_price) as total_sales
         from products
         inner join order_details on products.product_id = order_details.product_id
         inner join categories on products.category_id = categories.category_id
-        group by product.category_id, categories.category_name
+        group by products.category_id, categories.category_name
 
     )
 
@@ -465,9 +466,9 @@ from category_sales
 </details>
 
 
-3. Create a model `marts/employee_sales_per_country.sql`.
-    * For each employee, get their sales amount, broken down by country name.
-
+3. Create a model `marts/employee_sales.sql`.
+    * Calculate the total sale amount for each employee
+        
 <details>
 <summary>Solution</summary>
 
@@ -477,28 +478,42 @@ with
 
     orders as (select * from {{ ref("stg_orders") }}),
 
-    order_details as (select * from {{ ref("stg_order_details") }}),
+    order_details as (select * from {{ ref("order_details") }}),
 
     order_subtotals as (
-        -- Get subtotal for each order
-        select distinct
-            order_id, sum(unit_price * quantity * (1 - discount)) as subtotal
+        select
+            order_id,
+            sum(order_details.discounted_total_price) as sale_amount
         from order_details
         group by order_id
     ),
 
+    employee_sales as (
+
+        select
+            orders.employee_id,
+            min(order_date) as first_order_date,
+            max(order_date) as last_order_date,
+            sum(order_subtotals.sale_amount) as total_sale_amount
+        from orders
+        inner join order_subtotals on orders.order_id = order_subtotals.order_id
+        group by orders.employee_id
+
+    ),
+    
     final as (
 
-        select distinct
-            employees.country,
-            employees.last_name,
+        select
             employees.first_name,
-            orders.shipped_date,
-            orders.order_id,
-            order_subtotals.subtotal as sale_amount
-        from employees
-        inner join orders on orders.employee_id = employees.employee_id
-        inner join order_subtotals on orders.order_id = order_subtotals.order_id
+            employees.last_name,
+            employees.country,
+            employee_sales.total_sale_amount,
+            employee_sales.first_order_date,
+            employee_sales.last_order_date,
+            date_diff(employee_sales.last_order_date, employee_sales.first_order_date, day) as days_active
+        from employee_sales
+        inner join employees on employee_sales.employee_id = employees.employee_id
+        order by employee_sales.total_sale_amount desc
 
     )
 
