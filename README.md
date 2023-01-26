@@ -270,56 +270,64 @@ Execute the `dbt compile` command to build the example models.
 
 For now the most important parts of the generated dbt project structure are:
 * `models/` directory
-    * Here we create `.yml` files to define source tables and data models we wish to create.
+    * Here we create `.yml` files to define source tables and data models we wish to test and document.
     * And the actual `.sql` (Jinja-templated) models that define our transformation.
 * `dbt_project.yml` 
-    * The `models.northwind` configuration is used to define defaults for our models,
+    * The `models.northwind` property is used to define defaults for our models,
     e.g. the materialization
     
 In theory dbt will work just fine if we create a single `.yml` file in `models/` and 
-config all our sources and models in there.
+configure all our sources and models in there.
 However splitting up the `.yml` files and creating some directories to include
 specific models should improve organization of our models a bit.
 
 Under `models/` we will create
 * A `staging/` directory
-    * This is the entry model point to our transformation pipeline(s)
-    * Models defined here are prefixed with `stg_`, e.g. `models/staging/stg_orders.sql`
-    * The following transformations are applied in this phase of the pipeline:
+    * This is the entry point to our transformation pipeline(s)
+    * Models defined here are prefixed with `stg_`, e.g. `stg_orders.sql`
+    * [Best practice](https://docs.getdbt.com/guides/best-practices/how-we-structure/2-staging#staging-models) is to only apply the following transformations in this phase of the pipeline:
         * Renaming
         * Type casting
         * Basic computations (e.g. cents to dollars)
         * Categorizing (using conditional logic to group values into buckets or booleans, such as in the case when statements above)
         * ❌ Staging models should not include any joins or aggregations.
 * A `marts/` directory
-    * Transformations in these models are generally joins or aggregations
-    * Mart models are refined from staging models and create a table that can be used by an external tool
+    * Transformations in these models generally contain joins or aggregations
+    * Mart models are refined from staging models and prepared for use by an external tool (e.g. dashboard or ML training pipeline)
 
+This results in the following structure:
 ```txt
 northwind/models
 ├── marts
 │   ├── _models.yml
-│   └── customers.sql
+│   └── orders.sql
 └── staging
     ├── _models.yml
     ├── _sources.yml
-    └── stg_customers.sql
+    └── stg_orders.sql
 ```
 
-### Exercise: Populate staging model
+* `_sources.yml`: here source tables are defined which should be referenced in staging models
+    * Source tables should generally only be referenced directly in staging models
+* `_models.yml`: here data models, e.g. `stg_orders`, are defined alongside possible tests and documentation
 
-Create staging models for `orders`, `order_details`, `products`, `categories` and `employees`, select all but the `_airbyte*` columns.
+### Exercise: Create staging models
+
+Create staging models for `orders`, `order_details`, `products`, `categories` and `employees`
 1. [Define sources](https://docs.getdbt.com/docs/build/sources) in `_sources.yml`
 1. Create `stg_[NAME].sql` model files with the relevant select statement
-    * Use the `source` Jinja function to reference a source
+    * Use the `source` Jinja function to refer to a source table
+    * Select all but the `_airbyte*` columns
 1. Run dbt to create the staging models in BigQuery
 
 ```sh
 dbt run
 ```
 
+Navigate to BigQuery and have a look at the staging tables dbt should have created (a refresh might be required).
+
 Supplementary exercises:
-* Change the [materialization](https://docs.getdbt.com/docs/build/materializations) of `stg_orders.yml`, what happens?
+* Change the [materialization](https://docs.getdbt.com/docs/build/materializations) of `stg_orders.sql`, what happens?
     * Look at the dbt documentation to learn about the different materializations strategies for dbt models. What is the difference between a table and a view?
 * Run only a single model at a time ([docs](https://docs.getdbt.com/reference/node-selection/syntax))
 * Write some bad SQL to cause an error — can you debug this error?
@@ -329,7 +337,8 @@ Supplementary exercises:
 
 Adding [tests](https://docs.getdbt.com/docs/building-a-dbt-project/tests) to a project helps validate that your models are working correctly. So let's add some tests to our project!
 
-Models are configured with tests (and documentation) in the `.yml` file using the following structure:
+Models are configured with tests (and documentated) in the `.yml` file using the following structure:
+Test are defined in the `.yml` files under the relevant 
 ```yaml
 version: 2
 
@@ -339,9 +348,10 @@ models:
       - name: order_id
 ```
 
-Read [test docs](https://docs.getdbt.com/docs/building-a-dbt-project/tests) on how to define tests.
+Read [test docs](https://docs.getdbt.com/docs/build/tests#example) on how to define tests.
+Working with dbt's out of the box four generic tests can often be enough to significantly improve data quality insurances.
 
-Try to come up with relevant tests by study the staging tables on BigQuery
+Try to come up with relevant tests by studying the staging tables on BigQuery.
 
 Here are some test suggestions:
 
@@ -357,16 +367,15 @@ dbt test
 ```
 
 Supplementary exercises:
-* Write a test that fails, for example, omit one of the order statuses in the `accepted_values` list. What does a failing test look like? Can you debug the failure?
+* Write a test that fails, for example, omit one of the cities in the `accepted_values` list. What does a failing test look like? Can you debug the failure?
 * Run the tests for one model only. If you grouped your `stg_` models into a directory, try running the tests for all the models in that directory.
-
 
 ### Exercise: [Document your models](https://docs.getdbt.com/tutorial/test-and-document-your-project#document-your-models)
 
 Adding [documentation](https://docs.getdbt.com/docs/building-a-dbt-project/documentation) to your project allows you to describe your models in rich detail, and share that information with your team. Here, we're going to add some basic documentation to our project.
 
 1. Update your `models/staging/_models.yml` file to include some descriptions.
-    * Both on the model and column level.
+    * Both on model and column level.
 1. Execute `dbt docs generate` to generate the documentation for your project.
     * dbt introspects your project and your warehouse to generate a json file with rich documentation about your project, which can be found at `target/catalog.json`
 1. [CLI] Execute `dbt docs serve` to launch the documentation in a local website.
@@ -378,9 +387,11 @@ Supplementary exercise:
 ### Exercise: Creating mart models 
 
 Let's create models in the marts area.
-Here we will combine and/or aggregate staging models to create new models which are generally used directly for analytics purposes (dashboards or ML modelling).
+Here we will combine and/or aggregate staging models to create new models which are ready to be used for analytical purposes.
 
-> NOTE: Use `ref` Jinja functions to refer back to staging models Jinja.
+> NOTE: Use the `ref` Jinja function to refer to staging models.
+
+A solution is provided for each exercise for if you get stuck.
 
 1. Create a model `marts/order_details.sql`.
     * Calculate sales price for each order after discount is applied, `discounted_price`.
@@ -422,7 +433,7 @@ from final
 2. Create a model `marts/category_sales.sql`
     * This model should calculate the total sales for each product category
     * Group orders by category and sum the total sales for each group.
-    * The sales amount calculation for each product sale should use the `discounted_price`.
+    * The sales amount calculation for each product sale should use the `discounted_price` created in the previous model.
 
 <details>
 <summary>Solution</summary>
@@ -497,7 +508,7 @@ from final
 </details>
 
 
-4. Create model `marts/orders_per_month.sql`
+4. Create a model `marts/orders_per_month.sql`
     * Calculate the total number of orders per month (per year)
 
 <details>
@@ -527,12 +538,12 @@ from final
 ```
 </details>
 
-This model could be used to train a forecaster model on, predicting future orders.
+> This (data) model could be used to train a forecaster model on.
 
 Supplementary exercise:
 * Rerun `dbt docs generate` and `dbt docs serve` and have a look at the lineage graph
-    * By use of the `ref` Jinja macro dbt can create this graph
-    * This is especially useful for large dbt data warehouses.
+    * By using the `ref` Jinja function dbt can create this graph
+    * This is especially useful for large dbt projects
 
 ## Keep learning
 
