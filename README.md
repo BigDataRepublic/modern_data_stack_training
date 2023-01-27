@@ -117,7 +117,7 @@ We are going to use pgAdmin to connect to the CloudSQL instance on GCP, create a
 4. Set up Source:
     * Host: `localhost`
     * Port: `5432`
-    * Database Name: `localhost`
+    * Database Name: `<YOUR_UNIQUE_PREFIX>_northwind`
     * Username: `postgres`
     * Password: `<see slack for password>`
 
