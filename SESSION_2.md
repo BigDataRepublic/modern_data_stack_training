@@ -309,5 +309,11 @@ Read more about Looker Studio features [here](https://cloud.google.com/looker/do
 
 ## Keep learning
 
+- [What is the modern data stack?](https://hevodata.com/learn/what-is-the-modern-data-stack/)
+- [Understanding the Modern Data Stack](https://tanay.substack.com/p/understanding-the-modern-data-stack)
+- [What’s So Modern About the Modern Data Stack?](https://neptune.ai/blog/modern-data-stack)
+- [Is ETL Still Relevant?](https://www.integrate.io/blog/is-etl-dead/)
 - [dbt best practices](https://docs.getdbt.com/guides/best-practices)
+- [dbt fundemntals free courses](https://courses.getdbt.com/collections)
 - [dbt discourse](https://discourse.getdbt.com/)
+- Jinja & Macros for modular and cleaner SQL Queries [Part 1](https://blog.devgenius.io/excelling-at-dbt-jinja-macros-for-modular-and-cleaner-sql-queries-part-1-2-55e29d4b29e2) [Part 2](https://blog.devgenius.io/excelling-at-dbt-jinja-macros-for-modular-and-cleaner-sql-queries-part-2-2-88949c1af46c)
