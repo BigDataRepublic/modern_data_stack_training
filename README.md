@@ -1,4 +1,4 @@
-# ↗️ Link to [Session 2]("./SESSION_2.md")
+# ↗️ Link to [Session 2](SESSION_2.md)
 
 # Modern Data Stack Training
 
