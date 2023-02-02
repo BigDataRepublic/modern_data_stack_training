@@ -190,7 +190,7 @@ Read about pros/cons of different materializations [here](https://docs.getdbt.co
 * [General introduction to incremental models](https://docs.getdbt.com/docs/build/incremental-models)
 * [When to use incremental models](https://docs.getdbt.com/docs/build/incremental-models#when-should-i-use-an-incremental-model)
 
-- Simulate adding additional rows by inserting few samples to the `orders` raw table.
+- Simulate adding additional rows by inserting a few samples to the `orders` raw table.
 
 > NOTE: generally these rows would be added to the actual source
 > (in our case Postgres), however as an example it is easier to add new rows
@@ -217,7 +217,7 @@ VALUES (8.0, 14450, 2, 'Houston', 'Jessica Brown', '2022-05-01', 'BLONP', 5, 'So
 ```
 
 - Change materialization on `stg_orders` model to `incremental`.
-- Utilize `is_incremental()` macro to filter for new rows only.
+- Utilize the `is_incremental()` macro to filter for new rows only.
 - \[Optional:\] Configure materialization with a `unique_key='order_id'` to allow for modification of existing rows rather than only adding new ones.
 - Run `dbt run -s stg_orders`
   - Only added order rows have been processed
