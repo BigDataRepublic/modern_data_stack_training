@@ -185,19 +185,18 @@ Traditional data models run code against the entire dataset each time they are e
 
 Read about pros/cons of different materializations [here](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/materializations#materializations)
 
-### Exercise: Create incremental model
+### Exercise: Change `stg_orders` materialization to incremental
 
-[docs](https://docs.getdbt.com/docs/build/incremental-models)
+* [General introduction to incremental models](https://docs.getdbt.com/docs/build/incremental-models)
+* [When to use incremental models](https://docs.getdbt.com/docs/build/incremental-models#when-should-i-use-an-incremental-model)
 
-[when to use incremental models](https://docs.getdbt.com/docs/build/incremental-models#when-should-i-use-an-incremental-model)
-
-1. Simulate adding additional rows by inserting few samples to the `orders` raw table.
+- Simulate adding additional rows by inserting few samples to the `orders` raw table.
 
 > NOTE: generally these rows would be added to the actual source
 > (in our case Postgres), however as an example it is easier to add new rows
 > directly to the raw table on BigQuery
 
-- Execute the following insert statements from the Bigquery GCP console:
+- Execute the following insert statements from the BigQuery GCP console:
 
 ```sql
 INSERT INTO `modern-data-stack-training.<YOUR_UNIQUE_PREFIX>_northwind_raw.orders` (freight, order_id, ship_via, ship_city, ship_name, order_date, customer_id, employee_id, ship_region, ship_address, ship_country, shipped_date, required_date, ship_postal_code, _airbyte_ab_id, _airbyte_emitted_at, _airbyte_normalized_at, _airbyte_orders_hashid)
@@ -239,26 +238,27 @@ VALUES (8.0, 14450, 2, 'Houston', 'Jessica Brown', '2022-05-01', 'BLONP', 5, 'So
 - Update the content of `snapshots/employees.sql` file with the snapshot code `{% snapshot employees_snapshot %}`
 
   - Configure the snapshot
-    - `target_schema='YOUR_UNIQUE_PREFIX>_dbt'`
+    - `target_schema='<YOUR_UNIQUE_PREFIX>_dbt'`
     - `strategy='check'` (Read more about it [here](https://docs.getdbt.com/docs/build/snapshots#check-strategy))
     - `unique_key='employee_id'`
     - `check_cols=['address', 'postal_code', 'home_phone', 'title_of_courtesy']'`
-  - In the body, select from the `employees` raw model
+  - In the body, select from the `employees` source (as done in the staging models)
 
 - Run the command `dbt snapshot` to create the snapshot table
 
-> Examine the created table, you will observe that dbt has incorporated the columns "dbt_valid_from" and "dbt_valid_to," with the latter set to null values. Future executions will modify this
+> Examine the created table `employees_snapshot`, you will observe that dbt has incorporated the columns "dbt_valid_from" and "dbt_valid_to," with the latter set to null values. Future executions will modify this
 
 - Update one of the employee existing records in the raw table
 
 ```sql
-UPDATE employees
+UPDATE `<YOUR_UNIQUE_PREFIX>_northwind_raw.employees`
 SET address = 'Reguliersdwarsstraat', title_of_courtesy = 'Mrs.' 
 WHERE employee_id = 7;
 
 ```
 
 - Re-run the `dbt snapshot` to capture the changes
+  - Check out `employees_snapshot` for the changes (related to `employee_id = 7`)
 
 ## Create a Dashboard
 
