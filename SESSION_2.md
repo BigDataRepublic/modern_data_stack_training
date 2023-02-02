@@ -256,11 +256,14 @@ WHERE employee_id = 7;
 - Re-run the `dbt snapshot` to capture the changes
   - Check out `employees_snapshot` for the changes (related to `employee_id = 7`)
 
-## Create a Dashboard
+## Charts & Dashboards
+Having transformed the data, it's now time to convert it into informative and engaging reports. To achieve this, we will utilize Looker Studio, formerly known as Google Data Studio. This platform offers a user-friendly interface for crafting interactive dashboards, charts, and reports, providing a seamless experience for data visualization and analysis.
 
-### Looker Studio (previously named: Google Data Studio)
+Read more about Looker Studio features [here](https://cloud.google.com/looker/docs).
 
-Go to https://lookerstudio.google.com/
+### Exercise: Create a Business intelligence (BI) dashboard 
+
+- Go to https://lookerstudio.google.com/
 
 - Create new report
 
