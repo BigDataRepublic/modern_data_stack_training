@@ -58,7 +58,9 @@ It is maintained by `dbt-labs` and adds some generally useful macros.
 
   - Use `not_empty_string` to verify `categories.category_name` is not an empty string.
   - Use `accepted_range` to verify `order_details.discount` has a lower bound of `0` (inclusive) and an upper bound of `1` (inclusive)
-  - Use `unique_combination_of_columns` to verify the combination `order_id` and `product_id` unique identifies a row in `order_detail`
+  - Use `unique_combination_of_columns` to verify the combination `order_id` and `product_id` uniquely identifies a row in `order_detail`
+
+  > NOTE: These could be added on the sources directly in `staging/_sources.yml` or on the staging models in `staging/_models.yml`
 
 - Run `dbt test` to make sure all tests pass
 
@@ -78,35 +80,55 @@ Now we will write our own custom tests.
 We will write a [generic reusable test](https://docs.getdbt.com/guides/best-practices/writing-custom-generic-tests#generic-tests-with-default-config-values).
 Instead of error-ing this specific test will warn when it fails.
 
-- Create file `tests/generic/warn_if_odd.sql`
+- Create file `tests/generic/warn_if_greater_than.sql`
 
-- Write a test that will _warn_ if a numeric value is odd
+- Write a test that will _warn_ if a numeric value is greater than the provided value
 
   <details>
     <summary>Solution</summary>
 
   ```sql
-  {% test warn_if_odd(model, column_name) %}
+  {% test warn_if_greater_than(model, column_name, max_value=1000) %}
 
       {{ config(severity = 'warn') }}
 
       select {{ column_name }}
       from {{ model }}
-      where ({{ column_name }} % 2) = 1
+      where {{ column_name }} > {{ max_value }}
 
   {% endtest %}
   ```
 
   </details>
 
-> In general dbt tests are select statements which fail if the select statement returns a non-zero amount of rows.
->
-> This specific test is used for demonstrative purposes as it is not very useful in our example data warehouse.
+> NOTE: dbt tests are select statements which fail if the select statement returns a non-zero amount of rows.
 
 - Try it out:
-  - Warn if `order_details.quantity` is odd
-  - Run `dbt test` to verify the warning gets output
+  - Warn if `orders.freight` is greater than 999
 
+    > NOTE: This test can be added on the source directly in `staging/_sources.yml` or on the staging model in `staging/_models.yml`
+
+    <details>
+      <summary>Solution</summary>
+
+    ```yml
+    version: 2
+
+    sources:
+      - name: <YOUR_UNIQUE_PREFIX>_northwind_raw
+        tables:
+          - name: orders
+            columns:
+              - name: freight
+                tests:
+                  - warn_if_greater_than:
+                      max_value: 999
+    ```
+
+    </details>
+
+  - Run `dbt test` to verify the warning gets output
+  
 It is also possible to override the default 'error' severity of predefined tests to 'warn'.
 This requires adding additional configuration, see [the docs](https://docs.getdbt.com/reference/resource-configs/severity).
 

@@ -340,8 +340,9 @@ Supplementary exercises:
 
 Adding [tests](https://docs.getdbt.com/docs/building-a-dbt-project/tests) to a project helps validate that your models are working correctly. So let's add some tests to our project!
 
-Models are configured with tests (and documentated) in the `.yml` file using the following structure:
-Test are defined in the `.yml` files under the relevant 
+Models are configured with tests (and documented) in the `.yml` file using the following structure:
+Test are defined in the `.yml` files under the relevant directory
+
 ```yaml
 version: 2
 
