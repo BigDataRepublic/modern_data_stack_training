@@ -181,21 +181,24 @@ Now will write and use our own [custom macros](https://docs.getdbt.com/docs/buil
 
 ## Advanced materialization
 
-Traditional data models run code against the entire dataset each time they are executed, overwriting previous results. Incremental models, on the other hand, run code against the entire dataset only once during the initial run and then only execute on new data in subsequent runs. 
+Traditional data models run code against the entire dataset each time they are executed, overwriting previous results. Incremental models, on the other hand, run code against the entire dataset only once during the initial run and then only execute on new data in subsequent runs.
 
 Read about pros/cons of different materializations [here](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/materializations#materializations)
+
 ### Exercise: Create incremental model
 
 [docs](https://docs.getdbt.com/docs/build/incremental-models)
 
 [when to use incremental models](https://docs.getdbt.com/docs/build/incremental-models#when-should-i-use-an-incremental-model)
 
-1. Simulate adding additional rows by inserting few samples to the `orders` raw table. 
+1. Simulate adding additional rows by inserting few samples to the `orders` raw table.
+
 > NOTE: generally these rows would be added to the actual source
 > (in our case Postgres), however as an example it is easier to add new rows
 > directly to the raw table on BigQuery
 
-* Execute the following insert statements from the Bigquery GCP console:
+- Execute the following insert statements from the Bigquery GCP console:
+
 ```sql
 INSERT INTO `modern-data-stack-training.<YOUR_UNIQUE_PREFIX>_northwind_raw.orders` (freight, order_id, ship_via, ship_city, ship_name, order_date, customer_id, employee_id, ship_region, ship_address, ship_country, shipped_date, required_date, ship_postal_code, _airbyte_ab_id, _airbyte_emitted_at, _airbyte_normalized_at, _airbyte_orders_hashid)
 VALUES (10.0, 15335, 1, 'New York', 'John Doe', '2022-01-01', 'CONSH', 1, 'North', '123 Main St', 'USA', '2022-02-01', '2022-03-01', '10001', 'ab_id_1', '2022-01-01 12:00:00', '2022-01-01 12:00:00', 'hash_id_1');
@@ -214,42 +217,48 @@ VALUES (8.0, 14450, 2, 'Houston', 'Jessica Brown', '2022-05-01', 'BLONP', 5, 'So
 
 ```
 
-* Change materialization on `stg_orders` model to `incremental`.
-* Utilize `is_incremental()` macro to filter for new rows only.
-* [Optional:] Configure materialization with a `unique_key='order_id'` to allow for modification of existing rows rather than only adding new ones.
-* Run `dbt run -s stg_orders`
-    * Only added order rows have been processed
-    * Number of rows processed should be visible in logs
-* [Optional:] run the same model with `--full-refresh` to force rebuilding the table from scratch.
-
+- Change materialization on `stg_orders` model to `incremental`.
+- Utilize `is_incremental()` macro to filter for new rows only.
+- \[Optional:\] Configure materialization with a `unique_key='order_id'` to allow for modification of existing rows rather than only adding new ones.
+- Run `dbt run -s stg_orders`
+  - Only added order rows have been processed
+  - Number of rows processed should be visible in logs
+- \[Optional:\] run the same model with `--full-refresh` to force rebuilding the table from scratch.
 
 > NOTE: about the complexity incremental models introduce
 > see: https://www.getdbt.com/coalesce-2021/trials-and-tribulations-of-incremental-models/
 
 ## Snapshots
+
 [DBT snapshots](https://docs.getdbt.com/docs/build/snapshots) record changes made to a mutable model over time, enabling point-in-time queries. This feature uses [Slowly Changing Dimensions type-2](https://www.sqlshack.com/implementing-slowly-changing-dimensions-scds-in-data-warehouses/) and tracks the validity of each row with "from" and "to" date columns.
 
-### Exercise: Capture employees changes 
+### Exercise: Capture employees changes
 
-* Create file `snapshots/employees.sql`
-* Update the content of `snapshots/employees.sql` file with the snapshot code `{% snapshot employees_snapshot %}`
-    * Configure the snapshot
-      * `target_schema='YOUR_UNIQUE_PREFIX>_dbt'`
-      * `strategy='check'` (Read more about it [here](https://docs.getdbt.com/docs/build/snapshots#check-strategy))
-      * `unique_key='employee_id'`
-      * `check_cols=['address', 'postal_code', 'home_phone', 'title_of_courtesy']'`
-    * In the body, select from the `employees` raw model 
+- Create file `snapshots/employees.sql`
 
-* Run the command `dbt snapshot` to create the snapshot table
+- Update the content of `snapshots/employees.sql` file with the snapshot code `{% snapshot employees_snapshot %}`
+
+  - Configure the snapshot
+    - `target_schema='YOUR_UNIQUE_PREFIX>_dbt'`
+    - `strategy='check'` (Read more about it [here](https://docs.getdbt.com/docs/build/snapshots#check-strategy))
+    - `unique_key='employee_id'`
+    - `check_cols=['address', 'postal_code', 'home_phone', 'title_of_courtesy']'`
+  - In the body, select from the `employees` raw model
+
+- Run the command `dbt snapshot` to create the snapshot table
+
 > Examine the created table, you will observe that dbt has incorporated the columns "dbt_valid_from" and "dbt_valid_to," with the latter set to null values. Future executions will modify this
-* Update one of the employee existing records in the raw table
+
+- Update one of the employee existing records in the raw table
+
 ```sql
 UPDATE employees
 SET address = 'Reguliersdwarsstraat', title_of_courtesy = 'Mrs.' 
 WHERE employee_id = 7;
 
 ```
-* Re-run the `dbt snapshot` to capture the changes
+
+- Re-run the `dbt snapshot` to capture the changes
 
 ## Create a Dashboard
 
