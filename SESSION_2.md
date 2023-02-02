@@ -175,10 +175,6 @@ Now will write and use our own [custom macros](https://docs.getdbt.com/docs/buil
   - To see what the macro evaluates to run `dbt compile 'models/marts/employee_sales.sql'`
   - And look at the compiled output (`target/compiled/models/marts/employee_sales.sql`)
 
-### Exercise: Use a dbt_utils macros in a model
-
-- maybe
-
 ## Advanced materialization
 
 Traditional data models run code against the entire dataset each time they are executed, overwriting previous results. Incremental models, on the other hand, run code against the entire dataset only once during the initial run and then only execute on new data in subsequent runs.
@@ -187,10 +183,10 @@ Read about pros/cons of different materializations [here](https://docs.getdbt.co
 
 ### Exercise: Change `stg_orders` materialization to incremental
 
-* [General introduction to incremental models](https://docs.getdbt.com/docs/build/incremental-models)
-* [When to use incremental models](https://docs.getdbt.com/docs/build/incremental-models#when-should-i-use-an-incremental-model)
+- [General introduction to incremental models](https://docs.getdbt.com/docs/build/incremental-models)
+- [When to use incremental models](https://docs.getdbt.com/docs/build/incremental-models#when-should-i-use-an-incremental-model)
 
-- Simulate adding additional rows by inserting a few samples to the `orders` raw table.
+* Simulate adding additional rows by inserting a few samples to the `orders` raw table.
 
 > NOTE: generally these rows would be added to the actual source
 > (in our case Postgres), however as an example it is easier to add new rows
