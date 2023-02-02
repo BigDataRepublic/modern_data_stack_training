@@ -15,7 +15,7 @@ In this session we will continue with dbt by covering more advanced topics
 
 - Working with packages
 - Writing custom tests
-- Writing and using macos
+- Writing and using marcos
 - Using `incremental` materialization
 - Using snapshots
 
