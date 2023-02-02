@@ -217,21 +217,20 @@ Read about pros/cons of different materializations [here](https://docs.getdbt.co
 - Execute the following insert statements from the BigQuery GCP console:
 
 ```sql
-INSERT INTO `modern-data-stack-training.<YOUR_UNIQUE_PREFIX>_northwind_raw.orders` (freight, order_id, ship_via, ship_city, ship_name, order_date, customer_id, employee_id, ship_region, ship_address, ship_country, shipped_date, required_date, ship_postal_code, _airbyte_ab_id, _airbyte_emitted_at, _airbyte_normalized_at, _airbyte_orders_hashid)
-VALUES (10.0, 15335, 1, 'New York', 'John Doe', '2022-01-01', 'CONSH', 1, 'North', '123 Main St', 'USA', '2022-02-01', '2022-03-01', '10001', 'ab_id_1', '2022-01-01 12:00:00', '2022-01-01 12:00:00', 'hash_id_1');
+NSERT INTO modern-data-stack-training.<YOUR_UNIQUE_PREFIX>_northwind_raw.orders (freight, order_id, ship_via, ship_city, ship_name, order_date, customer_id, employee_id, ship_region, ship_address, ship_country, shipped_date, required_date, ship_postal_code, _airbyte_ab_id, _airbyte_emitted_at, _airbyte_normalized_at, _airbyte_orders_hashid)
+VALUES (10.0, 15335, 1, 'Amsterdam', 'Pieter van der Linden', '2022-01-01', 'CONSH', 1, 'Noord', '123 Hoofdstraat', 'NL', '2022-02-01', '2022-03-01', '1000 AB', 'ab_id_1', '2022-01-01 12:00:00', '2022-01-01 12:00:00', 'hash_id_1');
 
-INSERT INTO `modern-data-stack-training.<YOUR_UNIQUE_PREFIX>_northwind_raw.orders` (freight, order_id, ship_via, ship_city, ship_name, order_date, customer_id, employee_id, ship_region, ship_address, ship_country, shipped_date, required_date, ship_postal_code, _airbyte_ab_id, _airbyte_emitted_at, _airbyte_normalized_at, _airbyte_orders_hashid)
-VALUES (20.0, 15472, 2, 'Los Angeles', 'Jane Doe', '2022-02-01', 'NORTS', 2, 'West', '456 Main St', 'USA', '2022-03-01', '2022-04-01', '90001', 'ab_id_2', '2022-02-01 12:00:00', '2022-02-01 12:00:00', 'hash_id_2');
-
-INSERT INTO orders (freight, order_id, ship_via, ship_city, ship_name, order_date, customer_id, employee_id, ship_region, ship_address, ship_country, shipped_date, required_date, ship_postal_code, _airbyte_ab_id, _airbyte_emitted_at, _airbyte_normalized_at, _airbyte_orders_hashid)
-VALUES (15.0, 10462, 3, 'Chicago', 'James Smith', '2022-03-01', 'NORTS', 3, 'Midwest', '789 Main St', 'USA', '2022-04-01', '2022-05-01', '60001', 'ab_id_3', '2022-03-01 12:00:00', '2022-03-01 12:00:00', 'hash_id_3');
+INSERT INTO modern-data-stack-training.<YOUR_UNIQUE_PREFIX>_northwind_raw.orders (freight, order_id, ship_via, ship_city, ship_name, order_date, customer_id, employee_id, ship_region, ship_address, ship_country, shipped_date, required_date, ship_postal_code, _airbyte_ab_id, _airbyte_emitted_at, _airbyte_normalized_at, _airbyte_orders_hashid)
+VALUES (20.0, 15472, 2, 'Rotterdam', 'Sophie de Boer', '2022-02-01', 'NORTS', 2, 'West', '456 Keizersgrachtstraat', 'NL', '2022-03-01', '2022-04-01', '3000 AB', 'ab_id_2', '2022-02-01 12:00:00', '2022-02-01 12:00:00', 'hash_id_2');
 
 INSERT INTO orders (freight, order_id, ship_via, ship_city, ship_name, order_date, customer_id, employee_id, ship_region, ship_address, ship_country, shipped_date, required_date, ship_postal_code, _airbyte_ab_id, _airbyte_emitted_at, _airbyte_normalized_at, _airbyte_orders_hashid)
-VALUES (12.0, 19472, 1, 'Seattle', 'Robert Johnson', '2022-04-01', 'DUMON', 4, 'West', '246 Main St', 'USA', '2022-05-01', '2022-06-01', '98001', 'ab_id_4', '2022-04-01 12:00:00', '2022-04-01 12:00:00', 'hash_id_4');
+VALUES (15.0, 10462, 3, 'Amsterdam', 'Thomas Jansen', '2022-03-01', 'NORTS', 3, 'Midden', '789 Bloemstraatweg', 'NL', '2022-04-01', '2022-05-01', '1000 AB', 'ab_id_3', '2022-03-01 12:00:00', '2022-03-01 12:00:00', 'hash_id_3');
 
 INSERT INTO orders (freight, order_id, ship_via, ship_city, ship_name, order_date, customer_id, employee_id, ship_region, ship_address, ship_country, shipped_date, required_date, ship_postal_code, _airbyte_ab_id, _airbyte_emitted_at, _airbyte_normalized_at, _airbyte_orders_hashid)
-VALUES (8.0, 14450, 2, 'Houston', 'Jessica Brown', '2022-05-01', 'BLONP', 5, 'South', '369 Main St', 'USA', '2022-06-01', '2022-07-01', '77001', 'ab_id_5', '2022-05-01 12:00:00', '2022-05-01 12:00:00', 'hash_id_5');
+VALUES (12.0, 19472, 1, 'Rotterdam', 'Marieke van den Berg', '2022-04-01', 'DUMON', 4, 'West', '246 Vrijburglaan', 'NL', '2022-05-01', '2022-06-01', '3001 CD', 'ab_id_4', '2022-04-01 12:00:00', '2022-04-01 12:00:00', 'hash_id_4');
 
+INSERT INTO orders (freight, order_id, ship_via, ship_city, ship_name, order_date, customer_id, employee_id, ship_region, ship_address, ship_country, shipped_date, required_date, ship_postal_code, _airbyte_ab_id, _airbyte_emitted_at, _airbyte_normalized_at, _airbyte_orders_hashid)
+VALUES (8.0, 14450, 2, 'Den Haag', 'Jan Pieters', '2022-05-01', 'BLONP', 5, 'Zuid', '369 Damstraatje', 'NL', '2022-06-01', '2022-07-01', '2501 AB', 'ab_id_5', '2022-05-01 12:00:00', '2022-05-01 12:00:00', 'hash_id_5');
 ```
 
 - Change materialization on `stg_orders` model to `incremental`.
@@ -270,7 +269,7 @@ VALUES (8.0, 14450, 2, 'Houston', 'Jessica Brown', '2022-05-01', 'BLONP', 5, 'So
 
 ```sql
 UPDATE `<YOUR_UNIQUE_PREFIX>_northwind_raw.employees`
-SET address = 'Reguliersdwarsstraat', title_of_courtesy = 'Mrs.' 
+SET address = '3D Herengrachtstraat', home_phone = '06-12345678' 
 WHERE employee_id = 7;
 
 ```
@@ -299,7 +298,7 @@ Read more about Looker Studio features [here](https://cloud.google.com/looker/do
   - `category_sales`
   - `employee_sales`
   - `orders_per_month`
-  - After all three have been added the should be visible in the right hand side sidebar `"Data"`.
+  - After all three have been added they should be visible in the right hand side sidebar `"Data"`.
 
   <details>
     <summary>Toggle to show image</summary>
@@ -311,8 +310,10 @@ Read more about Looker Studio features [here](https://cloud.google.com/looker/do
   - Create a bar chart for `category_sales`
   - Create a bar chart for `employees_sales`
   - Create a time series chart for `orders_per_month`
-    - First add a `order_year_month` field to `orders_per_month` as a date type and convert to to `Year Month`
-    - Add a `Time Series Filter` on `order_year` to only select orders before the year 2000
+    - First add a `order_year_month` field to `orders_per_month` as a date type
+      - Once added select `Date & Time -> Year Month` from the dropdown of that field's type on the overview
+      - Press `Done`
+    - On the chart add a `Time Series Filter` on `order_year` to only select orders before the year 2000 (to remove outliers)
 
   <details>
     <summary>Toggle to show image - Category Sales chart</summary>
@@ -336,6 +337,6 @@ Read more about Looker Studio features [here](https://cloud.google.com/looker/do
 - [What’s So Modern About the Modern Data Stack?](https://neptune.ai/blog/modern-data-stack)
 - [Is ETL Still Relevant?](https://www.integrate.io/blog/is-etl-dead/)
 - [dbt best practices](https://docs.getdbt.com/guides/best-practices)
-- [dbt fundemntals free courses](https://courses.getdbt.com/collections)
+- [dbt fundamentals free courses](https://courses.getdbt.com/collections)
 - [dbt discourse](https://discourse.getdbt.com/)
 - Jinja & Macros for modular and cleaner SQL Queries [Part 1](https://blog.devgenius.io/excelling-at-dbt-jinja-macros-for-modular-and-cleaner-sql-queries-part-1-2-55e29d4b29e2) [Part 2](https://blog.devgenius.io/excelling-at-dbt-jinja-macros-for-modular-and-cleaner-sql-queries-part-2-2-88949c1af46c)
