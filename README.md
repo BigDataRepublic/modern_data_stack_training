@@ -1,3 +1,5 @@
+# ↗️ Link to [Session 2]("./SESSION_2.md")
+
 # Modern Data Stack Training
 
 Setup instructions and exercises for the Modern Data Stack training session.

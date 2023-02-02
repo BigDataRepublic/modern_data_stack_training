@@ -2,3 +2,5 @@
 temporal/
 logs/
 northwind/
+
+.DS_Store
